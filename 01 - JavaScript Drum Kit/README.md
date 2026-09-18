@@ -1,37 +1,29 @@
 ### Goal
-當使用者敲擊特定的一組按鍵，會播放對應的鼓聲，且被敲擊的按鍵圖案閃現光圈。
+當使用者按下按鍵，會播放對應的聲音，且該按鍵圖案出現短暫的特效。
 
 ### Flow (What)
-1. 找到 audio 與 key
+1. 找到按鍵對應的 audio 與 key
 2. 若不存在則退出程式
 3. 重設並播放 audio
 4. 加入 playing class
 5. CSS transition 結束
 6. 移除 playing 樣式
 
----
-1. 透過keyCode，分別將按鍵圖案與鼓聲連結起來。
-2. 當按鍵被敲擊的時候，先將相對應的鼓聲音檔指定為從0秒開始，再進行播放。
-3. 透過CSS class selector，選取所有按鍵圖案並加入光圈樣式。
-4. 當光圈樣式已渲染完畢，將該樣式移除回到原鍵盤圖案樣式。
-
-### Mechanism (How)
-
-
 ### Decision (Why)
-為什麼每次都要把音檔的時間設為0秒？
-為什麼要用transitionend，而不是setTimeout？
+1. 為什麼每次都要把audio的時間重設為0秒？
+- 因為如果沒有重設audio時間，當連續按下一個按鍵的時候，要等前面的audio播完，後面的才能開始播。
+- 當audio秒數大於兩次按下按鍵的間隔時間，就會變成第二次按鍵按下去了，卻沒聽到聲音，延遲幾秒後才聽見。
 
-### Syntax notes
-getElementsByClassName()和querySelector()有何不同？
-NodeList是什麼樣的資料結構？如何產生？為何需要用forEach()來遍歷？
-為何removeTransition()裡面的this能讀到key的值？ (closure)
-
-9/16
-window、document是什麼？attribute、property、method又是什麼？
-HTML的Element和React的Component有什麼不同？
-為什麼要叫querySelector而非elementSelector？
-
-addEventListener只是先「註冊事件」，等待發生時機才執行，因此屬於「非同步」，callback不能加小括號
-
-CSS屬性選擇器(attribute selector)的語法為什麼是用方括號？
+2. 為什麼移除CSS特效是用transitionend，而不是setTimeout()？
+```css
+.key {
+    transition: all 0.07s ease;
+}
+```
+- 如果用setTimeout()，指定倒數幾秒後移除CSS特效，而這個秒數必須對應CSS特效的持續時間長度。
+```javascript
+setTimeout(() => {
+    key.remove("playing");
+}, 70)
+```
+- 這樣一來，倘若日後要修改CSS特效持續時間，就必須同步修改setTimeout()的秒數，屆時很可能會忘記任何一邊而產生bug。
