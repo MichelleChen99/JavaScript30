@@ -126,9 +126,10 @@
       setTransition(minuteHand, isMinuteReset);
       setTransition(hourHand, isHourReset);
 
-      const secondDegrees = ((seconds / 60) * 360) + 90; // 90 is a hand rotating offset
-      const minuteDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6) + 90;
-      const hourDegrees = (((hours % 12) / 12) * 360) + ((minutes / 60) * 30) + 90; // Use remainder operator to turn the outcome of getHours() from 24 into 12 hour format
+      const CLOCK_HAND_OFFSET = 90; // 90 is a hand rotating offset
+      const secondDegrees = ((seconds / 60) * 360) + CLOCK_HAND_OFFSET;
+      const minuteDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6) + CLOCK_HAND_OFFSET;
+      const hourDegrees = (((hours % 12) / 12) * 360) + ((minutes / 60) * 30) + CLOCK_HAND_OFFSET; // Use remainder operator to turn the outcome of getHours() from 24 into 12 hour format
 
       secondHand.style.transform = `rotate(${secondDegrees}deg)`; // Manipulate inline CSS style
       minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
