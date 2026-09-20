@@ -10,6 +10,8 @@
 
     <div class="clock">
       <div class="clock-face">
+        <div class="horizontal-line"></div>
+        <div class="vertical-line"></div>
         <div class="hand hour-hand"></div>
         <div class="hand min-hand"></div>
         <div class="hand second-hand"></div>
@@ -57,6 +59,23 @@
       transform: translateY(-3px); /* account for the height of the clock hands */
     }
 
+    .horizontal-line {
+      width: 0.2%;
+      height: 100%;
+      background: lightslategray;
+      position: absolute;
+      right: 50%;
+      transform: rotate(90deg);
+    }
+
+    .vertical-line {
+      width: 0.2%;
+      height: 100%;
+      background: lightslategray;
+      position: absolute;
+      right: 50%;
+    }
+
     .hand {
       width: 50%;
       height: 6px;
@@ -66,8 +85,7 @@
       right: 50%;
       transform-origin: right center;
       transform: rotate(90deg);
-      transition: all 0.05s;
-      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1);
+      transition: transform 0.5s cubic-bezier(0.1, 2.7, 0.58, 1);
     }
 
     .hour-hand {
@@ -90,25 +108,34 @@
     const minuteHand = document.querySelector(".min-hand");
     const hourHand = document.querySelector(".hour-hand");
 
-    function setDate() {
+    function setTransition(hand, shouldReset) {
+      return hand.style.transition = shouldReset ? "none" : "";
+    }
+
+    function setClock() {
       const now = new Date();
-
-      console.log(now);
       const seconds = now.getSeconds();
-      const secondDegrees = ((seconds / 60) * 360) + 90; // 90 is an offset
-      secondHand.style.transform = `rotate(${secondDegrees}deg)`;
-
-      const minute = now.getMinutes();
-      const minuteDegrees = ((minute / 60) * 360) + 90;
-      minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
-
+      const minutes = now.getMinutes();
       const hours = now.getHours();
-      const hourDegrees = ((hours / 12) * 360) + 90;
+
+      const isSecondReset = seconds === 0;
+      const isMinuteReset = minutes === 0 && seconds === 0;
+      const isHourReset = hours % 12 === 0 && minutes === 0;
+
+      setTransition(secondHand, isSecondReset);
+      setTransition(minuteHand, isMinuteReset);
+      setTransition(hourHand, isHourReset);
+
+      const secondDegrees = ((seconds / 60) * 360) + 90; // 90 is a hand rotating offset
+      const minuteDegrees = ((minutes / 60) * 360) + ((seconds / 60) * 6) + 90;
+      const hourDegrees = (((hours % 12) / 12) * 360) + ((minutes / 60) * 30) + 90; // Use remainder operator to turn the outcome of getHours() from 24 into 12 hour format
+
+      secondHand.style.transform = `rotate(${secondDegrees}deg)`; // Manipulate inline CSS style
+      minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
       hourHand.style.transform = `rotate(${hourDegrees}deg)`;
     }
 
-  setInterval(setDate, 1000);
-
+    setInterval(setClock, 1000);
   </script>
 </body>
 </html>
