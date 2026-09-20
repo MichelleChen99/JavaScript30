@@ -35,13 +35,15 @@ const hourDegrees = (((hours % 12) / 12) * 360) + ((minutes / 60) * 30) + 90;
     position: absolute;
     top: 50%;
     right: 50%;
-    /* 指針定位在時鐘上方、右方各50%的地方，也就是9點鐘方向 */
+    /* 指針定位在鐘面的垂直、水平中線；配合上面的寬、高設定，就會畫出指向9點鐘方向的指針 */
+    transform-origin: right center;
+    /* 以指針右端為支點旋轉 */
     transform: rotate(90deg);
-    /* 然後再旋轉90度到12點鐘方向 */
+    /* 從9點鐘方向旋轉90度到12點鐘方向 */
 }
 ```
 
-JS計算出來的旋轉角度，會直接在DOM裡面inline產生動態變化，也就是會覆蓋掉style sheet原本已經設定好的旋轉90度，所以前面才需要再加回去。
+JS計算出來的旋轉角度，會直接在DOM裡面inline產生動態變化，也就是會覆蓋掉style sheet原本已經設定好的旋轉90度，所以才需要再加回去。
 ```javascript
 const secondHand = document.querySelector(".second-hand");
 const minuteHand = document.querySelector(".min-hand");
@@ -51,5 +53,18 @@ secondHand.style.transform = `rotate(${secondDegrees}deg)`;
 minuteHand.style.transform = `rotate(${minuteDegrees}deg)`;
 hourHand.style.transform = `rotate(${hourDegrees}deg)`;
 ```
-另外有一處CSS的細節：橫向指針比較容易將旋轉端點固定在時鐘的正中央。
-若寫成縱向指針，固然不必再用JS補償90度，但這時指針粗細就會影響指針指向的精確度，會產生1-2px的偏差。
+
+用JS補償90度是其中的一種解法。另一種解法是：一開始就畫縱向指針，配合CSS將指針依照自身寬度水平置中。
+相對的，指針的整個座標定位都需要修改，例如：
+```css
+.hand {
+  bottom: 50%;
+  left: 50%;
+  translate: -50% 0;
+  transform-origin: bottom center;
+}
+```
+---
+2. 為何會出現指針反彈的問題？
+
+3. 如何解決指針反彈的問題？
