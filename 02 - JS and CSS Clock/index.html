@@ -99,7 +99,8 @@
       translate: 0 -50%;
       transform-origin: right center;
       transform: rotate(90deg);
-      transition: transform 0.5s cubic-bezier(0.1, 2.7, 0.58, 1);
+      transition: transform 0.5s cubic-bezier(0.1, 2.7, 0.58, 1); /* Use cubic-bezier to 
+simulate a tick-tock clock */
     }
 
     .hour-hand {
@@ -123,7 +124,7 @@
     const hourHand = document.querySelector(".hour-hand");
 
     function setTransition(hand, shouldReset) {
-      return hand.style.transition = shouldReset ? "none" : "";
+      hand.style.transition = shouldReset ? "none" : "";
     }
 
     function setClock() {
